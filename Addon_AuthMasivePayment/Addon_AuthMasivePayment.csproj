@@ -162,8 +162,10 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Information\" />
     <Folder Include="Models\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Information\ITPS_ADDON_AUTH_PAYMENTS.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

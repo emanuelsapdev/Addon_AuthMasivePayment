@@ -1,0 +1,22 @@
+CREATE VIEW ITPS_ADDON_AUTH_PAYMENTS AS
+SELECT
+	'N' AS "Seleccionar",
+	T0."DocNum" AS "Nro Doc",
+	T0."DocEntry" AS "Nro Interno",
+	T0."DocDate" AS "Fecha Contabilización",
+	T0."CardCode" AS "Código SN",
+	T0."CardName" AS "Nombre SN",
+	T0."DocCur" AS "Moneda",
+	T0."DocTotal" AS "Total",
+	"Letter" || ' ' || RIGHT('00000' || "PTICode",
+	5)|| '-' || RIGHT('00000000' || "FolNumFrom",
+	8) AS "Número de Factura"
+FROM
+	OPCH T0
+WHERE
+	 T0."U_PagoAutorizado" = 'N'
+	 AND 
+	T0. "U_Auditado" = 'Y'
+	AND T0. "U_PagoBloqueado" = 'NO'
+	AND "U_PagoIntegracion" <> 'NULL'
+	AND T0."U_SelectToPay" = 'Y';
