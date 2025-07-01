@@ -15,6 +15,7 @@ using System.Windows.Forms;
 using CrystalDecisions.CrystalReports.Engine;
 using CrystalDecisions.Shared;
 using System.Data.Common;
+using System.Globalization;
 
 namespace Addon_AuthMasivePayment.Helpers
 {
@@ -27,11 +28,14 @@ namespace Addon_AuthMasivePayment.Helpers
         public const string sETDateFrom = "Item_6";
         public const string sETDateTo = "Item_7";
         public const string sBTNSelectAll = "Item_2";
+        public const string sLbTotalFinal = "Item_3";
         public const string sBTNDeselectAll = "Item_4";
         public const string sBTNRefresh = "Item_1";
         public const string sBTNAutorization = "Item_0";
         public const string sColNroInterno = "Nro Interno";
         public const string sColCardCode = "Código SN";
+        public const string sColSelect = "Seleccionar";
+        public const string sColTotal = "Total";
 
         #endregion 
 
@@ -208,7 +212,6 @@ namespace Addon_AuthMasivePayment.Helpers
                 for (int i = 0; i < oGridData.Rows.Count; i++)
                 {
                     oGridData.DataTable.Columns.Item("Seleccionar").Cells.Item(i).Value = selectOrDeselect == 1 ? "Y" : "N";
-
                 }
                 pForm.Freeze(false);
             }
@@ -218,6 +221,93 @@ namespace Addon_AuthMasivePayment.Helpers
             }
             
         }
+
+        public static void SetLabelTotalFinal0(SAPbouiCOM.Form pForm, ref SAPbouiCOM.ItemEvent pVal, int? selectOrDeselect)
+        {
+            try
+            {
+                SAPbouiCOM.StaticText oLbTotalFinal = pForm.Items.Item(sLbTotalFinal).Specific;
+                SAPbouiCOM.Grid oGridData = pForm.Items.Item(sGData).Specific;
+
+                double totalFinal = 0;
+                if (pVal.Row != -1)
+                {
+                    
+                    double valueTotalLine = oGridData.DataTable.GetValue(sColTotal, pVal.Row);
+                    string valueSelect = oGridData.DataTable.GetValue(sColSelect, pVal.Row);
+
+                    string valueTotalFinal = oLbTotalFinal.Caption;
+                    double.TryParse(valueTotalFinal.Replace("ARS", "").Replace(".", "").Trim(), out totalFinal);
+
+                    if (valueSelect == "Y")
+                    {
+                        totalFinal += valueTotalLine;
+                    }
+                    else
+                    {
+                        totalFinal -= valueTotalLine;
+                    }
+
+                    CultureInfo culturaArgentina = new CultureInfo("es-AR");
+                    oLbTotalFinal.Caption = totalFinal.ToString("N2", culturaArgentina) + " ARS";
+
+                } else
+                {
+
+                    if (selectOrDeselect == 1)
+                    {
+
+                        for (int i = 0; i < oGridData.Rows.Count; i++)
+                        {
+                            totalFinal += oGridData.DataTable.Columns.Item("Total").Cells.Item(i).Value;
+                        }
+
+                    } else
+                    {
+                        totalFinal = 0;
+                    }
+
+                    CultureInfo culturaArgentina = new CultureInfo("es-AR");
+                    oLbTotalFinal.Caption = totalFinal.ToString("N2", culturaArgentina) + " ARS";
+
+                }
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public static void SetLabelTotalFinal(SAPbouiCOM.Form pForm)
+        {
+            try
+            {
+                SAPbouiCOM.StaticText oLbTotalFinal = pForm.Items.Item(sLbTotalFinal).Specific;
+                SAPbouiCOM.Grid oGridData = pForm.Items.Item(sGData).Specific;
+
+                double totalFinal = 0;
+
+                for (int i = 0; i < oGridData.Rows.Count; i++)
+                {
+                    bool isSelected = oGridData.DataTable.GetValue("Seleccionar", i) == "Y";
+                    double valueTotal = oGridData.DataTable.Columns.Item("Total").Cells.Item(i).Value;
+                    if (isSelected)
+                    {
+                        totalFinal += valueTotal;
+                    }
+                    
+                }
+
+                CultureInfo culturaArgentina = new CultureInfo("es-AR");
+                oLbTotalFinal.Caption = totalFinal.ToString("N2", culturaArgentina) + " ARS";
+
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
 
         public static void RefreshDataAndFilterGrid(SAPbouiCOM.Form pForm)
         {

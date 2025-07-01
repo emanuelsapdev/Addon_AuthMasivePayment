@@ -36,24 +36,29 @@ namespace Addon_AuthMasivePayment.Forms
             {
                 _oForm = ConnectionSDK.UIAPI.Forms.Item(FormUID);
                 Helpers_WindowInforme.RefreshDataAndFilterGrid(_oForm);
+                Helpers_WindowInforme.SetLabelTotalFinal(_oForm);
             }
 
             if (pVal.ItemUID == Helpers_WindowInforme.sBTNSelectAll && pVal.ActionSuccess && pVal.EventType == BoEventTypes.et_ITEM_PRESSED)
             {
                 _oForm = ConnectionSDK.UIAPI.Forms.Item(FormUID);
                 Helpers_WindowInforme.SelectionOrDeselectionMasiveInGrid(_oForm, 1);
+                Helpers_WindowInforme.SetLabelTotalFinal(_oForm);
             }
 
             if (pVal.ItemUID == Helpers_WindowInforme.sBTNDeselectAll && pVal.ActionSuccess && pVal.EventType == BoEventTypes.et_ITEM_PRESSED)
             {
                 _oForm = ConnectionSDK.UIAPI.Forms.Item(FormUID);
                 Helpers_WindowInforme.SelectionOrDeselectionMasiveInGrid(_oForm, 0);
+                Helpers_WindowInforme.SetLabelTotalFinal(_oForm);
             }
 
             if (pVal.ItemUID == Helpers_WindowInforme.sBTNRefresh && pVal.ActionSuccess && pVal.EventType == BoEventTypes.et_ITEM_PRESSED)
             {
                 _oForm = ConnectionSDK.UIAPI.Forms.Item(FormUID);
                 Helpers_WindowInforme.RefreshDataAndFilterGrid(_oForm);
+                Helpers_WindowInforme.SetLabelTotalFinal(_oForm);
+
             }
 
 
@@ -77,6 +82,12 @@ namespace Addon_AuthMasivePayment.Forms
                 SAPbouiCOM.Grid oGridData = _oForm.Items.Item(Helpers_WindowInforme.sGData).Specific;
                 string valueCardCode = oGridData.DataTable.GetValue(Helpers_WindowInforme.sColCardCode, pVal.Row);
                 ConnectionSDK.UIAPI.OpenForm(BoFormObjectEnum.fo_BusinessPartner, "", valueCardCode);
+            }
+
+            if (pVal.ItemUID == Helpers_WindowInforme.sGData && pVal.ColUID == Helpers_WindowInforme.sColSelect && pVal.ActionSuccess && pVal.EventType == BoEventTypes.et_CLICK)
+            {
+                _oForm = ConnectionSDK.UIAPI.Forms.Item(FormUID);
+                Helpers_WindowInforme.SetLabelTotalFinal(_oForm);
             }
         }
 
